@@ -6,25 +6,6 @@ import requests
 import csv
 import os
 
-#setting_ids = json.load(open('path/file.json'))
-
-#s = requests.Session()
-#s.headers.update({"X-Auth-Email": "<email>",
-#            "X-Auth-Key": "<api_token>",
-#            "Content-Type": "application/json"})
-
-#with open('path/file.json') as data_file:
-#    data = json.load(data_file)
-#def create_columnsandvalues(i, columns, values):
-
-#    for k, v in i.iteritems():
-#        columns.append(k)
-#        values.append(v)
-
-#    columns = (', '.join("'" + str(column) + "'" for column in columns))
-#    values = (', '.join("'" + str(value) + "'" for value in values))
-#    return columns, values
-
 db_name = 'Cloudflare.db'
 
 
@@ -83,11 +64,10 @@ def dns_insert(data):
 
             columns = (', '.join("'" + str(column) + "'" for column in columns))
             values = (', '.join("'" + str(value) + "'" for value in values))
-# delete            #print columns
-# delete            #print values
+
 
             query = "INSERT INTO DNS_SETTINGS (%s) VALUES (%s);" % (columns , values)
-# delete            print query
+
             c.execute(query)
 
 def settings_insert(data, zone_name, zone_id, arg_map):
@@ -104,7 +84,6 @@ def settings_insert(data, zone_name, zone_id, arg_map):
 
         for i in data['items']:
             if i['id'] == 'minify':
-# delete                print json.dumps(i['value'])
                 i['value'] = json.dumps(i['value'])
             if i['id'] == 'mobile_redirect':
                 i['value'] = json.dumps(i['value'])
@@ -120,18 +99,10 @@ def settings_insert(data, zone_name, zone_id, arg_map):
 
             columns = (', '.join("'" + str(column) + "'" for column in columns))
             values = (', '.join("'" + str(value) + "'" for value in values))
-# delete            print columns, values
             query = "INSERT INTO ZONE_SETTINGS (%s) VALUES (%s);" % (columns , values)
-# delete            print query
             c.execute(query)
-# delete            print query
         if arg_map['write_csv']:
-            #c.connect(".headers on")
-            #c.execute(".mode csv")
-            #c.execute(".once customer.csv")
             c.execute("SELECT * from ZONE_SETTINGS ORDER BY ID ASC")
-            #c.execute(".system customer.csv")
-            #data = c.fetchall()
 
             with open('output.csv', 'wb') as f:
                 writer = csv.writer(f)
@@ -142,7 +113,6 @@ def destory_db():
     os.remove(db_name)
 
 
-
 def main(data, zone_name, zone_id, end_point, arg_map):
     if end_point == 'settings':
         settings_insert(data, zone_name, zone_id, arg_map)
@@ -150,5 +120,3 @@ def main(data, zone_name, zone_id, end_point, arg_map):
         dns_insert(data)
     if end_point == 'pagerules':
         pagerules_insert(data, zone_name, zone_id)
-#    if end_point == 'firewall':
-#        firewall_insert(data, zone_name, zone_id)
